@@ -10,7 +10,10 @@ import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourcesAlreadyExi
 import com.springSecurityImpl.learnSpringSecurity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ public class AuthServ {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public AuthRes Signup(AuthReq body) {
 
@@ -38,19 +42,34 @@ public class AuthServ {
 
     public AuthRes signIn(AuthReq body) {
 
-        User user  = isUserExist(body.getEmail());
-        if( user == null ){
-            throw new ResourceNotFoundException("User with Email: "+body.getEmail() +" not exist");
-        }
+//        Manual impl
+// -
+// -
+//        User user  = isUserExist(body.getEmail());
+//        if( user == null ){
+//            throw new ResourceNotFoundException("User with Email: "+body.getEmail() +" not exist");
+//        }
+//
+//        assert user.getPassword() != null;
+//        if(passwordEncoder.matches(body.getPassword(),user.getPassword() )){
+//
+//            return modelMapper.map(user,AuthRes.class);
+//        }
+//
+//
+//        throw new BadCredentialsException("Invalid userName / Password");
 
-        assert user.getPassword() != null;
-        if(passwordEncoder.matches(body.getPassword(),user.getPassword() )){
 
-            return modelMapper.map(user,AuthRes.class);
-        }
+//        impl via AuthenticationManager
 
 
-        throw new BadCredentialsException("Invalid userName / Password");
+        Authentication authentication = authenticationManager.authenticate(
+         new UsernamePasswordAuthenticationToken(body.getEmail(),body.getPassword())
+        );
+
+//        User user = (User) authentication.getPrincipal();
+
+        return modelMapper.map(authentication.getPrincipal(),AuthRes.class);
     }
 
 
