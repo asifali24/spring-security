@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +17,7 @@ import java.util.UUID;
 @Service
 public class JwtService {
 
-    @Value("${jwt.key}")
+    @Value("${Jwt.key}")
     private String secretKey;
 
     private SecretKey generateKey(){
@@ -31,7 +30,7 @@ public class JwtService {
                 .claim("email", user.getEmail())
                 .claim("roles", Set.of("ADMIN","USER"))
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis()+ 1000*60 ))
+                .expiration(new Date(System.currentTimeMillis()+ 1000*60*15 ))
                 .signWith(generateKey())
                 .compact();
     }

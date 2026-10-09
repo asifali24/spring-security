@@ -9,6 +9,7 @@ import com.springSecurityImpl.learnSpringSecurity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -67,9 +68,16 @@ public class AuthServ {
          new UsernamePasswordAuthenticationToken(body.getEmail(),body.getPassword())
         );
 
-//        User user = (User) authentication.getPrincipal();
+        System.out.println("authentication "+ authentication);
+        User user = (User) authentication.getPrincipal();
+//        assert  user != null;
 
-        return modelMapper.map(authentication.getPrincipal(),AuthRes.class);
+        if (user == null) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+        AuthRes ret =  modelMapper.map(authentication.getPrincipal(),AuthRes.class);
+        ret.setToken(jwtService.generateJwtToken(user));
+        return  ret;
     }
 
 
