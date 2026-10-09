@@ -10,5 +10,6 @@ public class AuthRes {
 
     private UUID id;
     private String email;
+    private String token;
 //    private String password;
 }

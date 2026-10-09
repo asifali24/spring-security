@@ -1,17 +1,14 @@
 package com.springSecurityImpl.learnSpringSecurity.services;
 
 
-import com.springSecurityImpl.learnSpringSecurity.controller.Auth;
 import com.springSecurityImpl.learnSpringSecurity.dto.AuthReq;
 import com.springSecurityImpl.learnSpringSecurity.dto.AuthRes;
 import com.springSecurityImpl.learnSpringSecurity.entities.User;
-import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourceNotFoundException;
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourcesAlreadyExist;
 import com.springSecurityImpl.learnSpringSecurity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +21,7 @@ public class AuthServ {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public AuthRes Signup(AuthReq body) {
 
@@ -36,7 +34,9 @@ public class AuthServ {
 
         User savedUser = userRepository.save(newUser);
         System.out.println(savedUser);
-        return modelMapper.map(savedUser,AuthRes.class);
+        AuthRes ret =  modelMapper.map(savedUser,AuthRes.class);
+        ret.setToken(jwtService.generateJwtToken(savedUser));
+        return  ret;
     }
 
 
