@@ -5,10 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -18,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "user_session")
 @Builder
-public class Session {
+public class Session extends Auditing {
 
 
     @Id
@@ -37,15 +33,5 @@ public class Session {
     @NotNull(message = "Revoked status is required")
     @Column(nullable = false)
     private Boolean isRevoked = false;
-
-    @CreatedDate
-    @NotNull(message = "Created at is required")
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @NotNull(message = "Updated at is required")
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 
 }

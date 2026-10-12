@@ -92,8 +92,8 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(InvalidSessionException.class)
-    public ResponseEntity<ApiResponse<?>> InvalidSessionException(
-            ResourcesAlreadyExist exception) {
+    public ResponseEntity<ApiResponse<?>> invalidSessionException(
+            InvalidSessionException exception) {
 
         ApiError err = ApiError.builder()
                 .status(HttpStatus.UNAUTHORIZED)

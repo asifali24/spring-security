@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @ToString
-public class User implements UserDetails {
+public class User extends Auditing implements UserDetails  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID )

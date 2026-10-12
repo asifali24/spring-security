@@ -2,7 +2,6 @@ package com.springSecurityImpl.learnSpringSecurity.services;
 
 
 import com.springSecurityImpl.learnSpringSecurity.entities.Session;
-import com.springSecurityImpl.learnSpringSecurity.exceptions.InvalidSessionException;
 import com.springSecurityImpl.learnSpringSecurity.repository.SessionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class UserSession {
 
         List<Session> prevNonLogoutSession = sessionRepository.findByUserIdAndIsRevokedFalse(userId);
 
-        if(prevNonLogoutSession.size() >0){
+        if(!prevNonLogoutSession.isEmpty()){
 
         prevNonLogoutSession
                 .stream()
@@ -44,11 +43,9 @@ public class UserSession {
 
     public Boolean isSessionValid(UUID userId,String token){
 
-        Session isValidSession = sessionRepository.findByUserIdAndTokenAndIsRevokedFalse(userId,token)
-                .orElseThrow(() -> new InvalidSessionException("Invalid Session"));
+        Session isValidSession = sessionRepository.findByUserIdAndTokenAndIsRevokedFalse(userId,token).orElse(null);
 
 
-
-        return true;
+        return isValidSession != null;
     }
 }
