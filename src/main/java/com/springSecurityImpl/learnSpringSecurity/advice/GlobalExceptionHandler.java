@@ -3,6 +3,7 @@ package com.springSecurityImpl.learnSpringSecurity.advice;
 
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourceNotFoundException;
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourcesAlreadyExist;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -75,6 +76,18 @@ public class GlobalExceptionHandler {
                 .body(formatError(err));
     }
 
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponse<?>> jwtException(JwtException e){
+        ApiError err = ApiError.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(formatError(err));
+    }
 
     private ApiResponse<?> formatError(ApiError err){
         return ApiResponse.<Object>builder()
