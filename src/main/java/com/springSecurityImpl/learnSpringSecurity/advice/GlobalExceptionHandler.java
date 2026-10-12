@@ -1,6 +1,7 @@
 package com.springSecurityImpl.learnSpringSecurity.advice;
 
 
+import com.springSecurityImpl.learnSpringSecurity.exceptions.InvalidSessionException;
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourceNotFoundException;
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourcesAlreadyExist;
 import io.jsonwebtoken.JwtException;
@@ -86,6 +87,21 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
+                .body(formatError(err));
+    }
+
+
+    @ExceptionHandler(InvalidSessionException.class)
+    public ResponseEntity<ApiResponse<?>> InvalidSessionException(
+            ResourcesAlreadyExist exception) {
+
+        ApiError err = ApiError.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .message(exception.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(formatError(err));
     }
 

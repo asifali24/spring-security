@@ -23,6 +23,7 @@ public class AuthServ {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserSession userSession;
 
     public AuthRes Signup(AuthReq body) {
 
@@ -43,27 +44,6 @@ public class AuthServ {
 
     public AuthRes signIn(AuthReq body) {
 
-//        Manual impl
-// -
-// -
-//        User user  = isUserExist(body.getEmail());
-//        if( user == null ){
-//            throw new ResourceNotFoundException("User with Email: "+body.getEmail() +" not exist");
-//        }
-//
-//        assert user.getPassword() != null;
-//        if(passwordEncoder.matches(body.getPassword(),user.getPassword() )){
-//
-//            return modelMapper.map(user,AuthRes.class);
-//        }
-//
-//
-//        throw new BadCredentialsException("Invalid userName / Password");
-
-
-//        impl via AuthenticationManager
-
-
         Authentication authentication = authenticationManager.authenticate(
          new UsernamePasswordAuthenticationToken(body.getEmail(),body.getPassword())
         );
@@ -76,7 +56,9 @@ public class AuthServ {
             throw new BadCredentialsException("Invalid credentials");
         }
         AuthRes ret =  modelMapper.map(authentication.getPrincipal(),AuthRes.class);
-        ret.setToken(jwtService.generateJwtToken(user));
+        String token = jwtService.generateJwtToken(user);
+        ret.setToken(token);
+        userSession.generateNewSessionAndInvalidatePrevOnce(user.getId(), token);
         return  ret;
     }
 

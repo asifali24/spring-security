@@ -2,6 +2,8 @@ package com.springSecurityImpl.learnSpringSecurity.config;
 
 
 import com.springSecurityImpl.learnSpringSecurity.filter.JwtAuthFilter;
+import com.springSecurityImpl.learnSpringSecurity.filter.RequestResponseFilter;
+import com.springSecurityImpl.learnSpringSecurity.filter.SessionValidationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final RequestResponseFilter requestResponseFilter;
+    private final SessionValidationFilter sessionValidationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -31,6 +35,8 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(requestResponseFilter, JwtAuthFilter.class)
+                .addFilterAfter(sessionValidationFilter,JwtAuthFilter.class)
                 .httpBasic(Customizer.withDefaults());
 
         return httpSecurity.build();
