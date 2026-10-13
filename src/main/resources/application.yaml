@@ -26,12 +26,13 @@ spring:
         format_sql: true
 
   security:
-   oauth2:
-    client:
-      registration:
-       google:
-        client-id: ${googleClientId:""}
-        client-secret: ${googleSecret:""}
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${googleClientId:""}
+            client-secret: ${googleSecret:""}
+            scope: openid, profile, email
 
 
 Jwt:

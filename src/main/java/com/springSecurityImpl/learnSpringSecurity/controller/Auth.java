@@ -30,8 +30,8 @@ public class Auth {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthRes> refreshToken(HttpServletRequest request){
-        return ResponseEntity.status(HttpStatus.OK).body(authServ.refreshToken(request));
+    public ResponseEntity<AuthRes> refreshToken(HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.status(HttpStatus.OK).body(authServ.refreshToken(request, response));
     }
 
     @PostMapping("/signout")

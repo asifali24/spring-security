@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 .csrf(c -> c.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**")
+                        .requestMatchers("/auth/**", "/oauth2/**", "/login/**")
 //                                .anyRequest()
                                 .permitAll()
                                 .anyRequest().authenticated()

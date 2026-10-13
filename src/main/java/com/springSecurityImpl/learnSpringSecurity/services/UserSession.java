@@ -19,7 +19,7 @@ public class UserSession {
 
 
     @Transactional
-    public void generateNewSessionAndInvalidatePrevOnce(UUID userId, String token){
+    public void generateNewSessionAndInvalidatePrevOnce(UUID userId, String accessToken, String refreshToken){
 
         List<Session> prevNonLogoutSession = sessionRepository.findByUserIdAndIsRevokedFalse(userId);
 
@@ -34,11 +34,17 @@ public class UserSession {
                 .toList();
         }
 
-        Session toBeCreated = Session.builder()
+        Session accessSession = Session.builder()
                 .userId(userId)
-                .token(token)
+                .token(accessToken)
                 .build();
-         sessionRepository.save(toBeCreated);
+        sessionRepository.save(accessSession);
+
+        Session refreshSession = Session.builder()
+                .userId(userId)
+                .token(refreshToken)
+                .build();
+        sessionRepository.save(refreshSession);
     }
 
     public Boolean isSessionValid(UUID userId,String token){

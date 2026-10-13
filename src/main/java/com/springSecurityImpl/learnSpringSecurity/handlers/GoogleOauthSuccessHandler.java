@@ -2,34 +2,34 @@ package com.springSecurityImpl.learnSpringSecurity.handlers;
 
 import com.springSecurityImpl.learnSpringSecurity.entities.User;
 import com.springSecurityImpl.learnSpringSecurity.repository.UserRepository;
-import com.springSecurityImpl.learnSpringSecurity.services.AuthServ;
 import com.springSecurityImpl.learnSpringSecurity.services.JwtService;
+import com.springSecurityImpl.learnSpringSecurity.services.UserSession;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
+import java.time.Duration;
 
-
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GoogleOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-//    private final AuthServ authServ;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final UserSession userSession;
+
+    @Value("${app.frontend-url:http://localhost:3000}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -39,10 +39,9 @@ public class GoogleOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         DefaultOAuth2User oAuth2User = (DefaultOAuth2User) oAuth2AuthenticationToken.getPrincipal();
 
         String email = oAuth2User.getAttribute("email");
-
-        log.info("--------------------------- email: {}",email);
-
-
+        if (email == null || email.isBlank()) {
+            throw new IllegalStateException("Google account did not provide an email");
+        }
         User user = userRepository.findByEmail(email).orElse(null);
 
         if(user == null){
@@ -52,43 +51,21 @@ public class GoogleOauthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             user = userRepository.save(newUser);
         }
-        String accessToken = jwtService.generateJwtToken(user,false);
-        String refreshToken = jwtService.generateJwtToken(user,true);
+        String accessToken = jwtService.generateJwtToken(user, false);
+        String refreshToken = jwtService.generateJwtToken(user, true);
+        userSession.generateNewSessionAndInvalidatePrevOnce(user.getId(), accessToken, refreshToken);
 
-        log.info("accessToken : {}",accessToken);
-        log.info("refreshToken : {}",refreshToken);
-
-        ResponseCookie cookie = ResponseCookie.from("refreshCookies",refreshToken)
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshCookies", refreshToken)
                 .httpOnly(true)
-                .sameSite("/auth")
-                .maxAge(30)
-                .sameSite("Strict")
+                .secure(false)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(Duration.ofDays(30))
                 .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-        getRedirectStrategy().sendRedirect(request,response,"http://localhost:4200/login?token"+accessToken);
-
-//        Map<String,String> tokens = authServ.oAuthSignInSignUp(email);
-
-//        for(Map<String,String> val : tokens.entrySet()){
-//            log.info("ket value {}",val);
-//        }
-
-//        tokens.forEach((k,v) -> {
-//            log.info(" {} -> {}",k,v);
-//        });
-
-
-//        if(email != null){
-//            // sign-in flow
-//
-//        }else {
-//            //signup flow
-//        }
-
-
-
+        getRedirectStrategy().sendRedirect(request, response,
+                frontendUrl + "/oauth/callback#access_token=" + accessToken);
     }
 
 }

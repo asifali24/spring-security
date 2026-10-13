@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(formatError(err));
     }
 
@@ -101,7 +101,7 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(formatError(err));
     }
 
