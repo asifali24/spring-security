@@ -52,9 +52,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             UUID userId = jwtService.getUserIdFromToken(token);
 
+            System.out.println("userid ---"+ userId);
+
             if(userId != null || SecurityContextHolder.getContext().getAuthentication() == null){
                 User retriveUser  = userSer.getUserById(userId);
-                UsernamePasswordAuthenticationToken authUser = new UsernamePasswordAuthenticationToken(retriveUser,null,null);
+                UsernamePasswordAuthenticationToken authUser = new
+                        UsernamePasswordAuthenticationToken(retriveUser,null,retriveUser.getAuthorities());
 //            authUser.setDetails(
 //                    new WebAuthenticationDetailsSource().buildDetails(request) // for getting any details in request like Ip and all
 //            );

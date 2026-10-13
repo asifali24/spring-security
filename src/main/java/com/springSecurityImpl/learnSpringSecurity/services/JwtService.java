@@ -41,7 +41,7 @@ public class JwtService {
         if(!isRefreshToken){
             token
                     .claim("email", user.getEmail())
-                    .claim("roles", Set.of("ADMIN","USER"));
+                    .claim("roles", user.getRoles());
         }
 
         return token

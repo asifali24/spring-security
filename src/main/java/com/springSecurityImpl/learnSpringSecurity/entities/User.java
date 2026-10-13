@@ -1,14 +1,18 @@
 package com.springSecurityImpl.learnSpringSecurity.entities;
 
 
+import com.springSecurityImpl.learnSpringSecurity.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "app_users")
@@ -30,9 +34,16 @@ public class User extends Auditing implements UserDetails  {
     @Column(nullable = true)
     private String password;
 
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Roles> roles;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return this.roles.stream()
+                .map(r -> new SimpleGrantedAuthority("ROLE_"+r.name()))
+                .collect(Collectors.toSet());
     }
 
     @Override

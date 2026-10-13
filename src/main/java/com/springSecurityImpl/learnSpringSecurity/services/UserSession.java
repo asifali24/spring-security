@@ -40,11 +40,11 @@ public class UserSession {
                 .build();
         sessionRepository.save(accessSession);
 
-        Session refreshSession = Session.builder()
-                .userId(userId)
-                .token(refreshToken)
-                .build();
-        sessionRepository.save(refreshSession);
+//        Session refreshSession = Session.builder()
+//                .userId(userId)
+//                .token(refreshToken)
+//                .build();
+//        sessionRepository.save(accessSession);
     }
 
     public Boolean isSessionValid(UUID userId,String token){

@@ -5,6 +5,7 @@ import com.springSecurityImpl.learnSpringSecurity.exceptions.InvalidSessionExcep
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourceNotFoundException;
 import com.springSecurityImpl.learnSpringSecurity.exceptions.ResourcesAlreadyExist;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -51,6 +53,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> internalServerError(Exception exc){
+        log.error("cause ->",exc);
         ApiError err = ApiError
                 .builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

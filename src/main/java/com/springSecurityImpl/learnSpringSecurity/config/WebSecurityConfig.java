@@ -8,6 +8,7 @@ import com.springSecurityImpl.learnSpringSecurity.handlers.GoogleOauthSuccessHan
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -21,6 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.springSecurityImpl.learnSpringSecurity.enums.Roles.ADMIN;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -31,16 +34,24 @@ public class WebSecurityConfig {
     private final SessionValidationFilter sessionValidationFilter;
     private final GoogleOauthSuccessHandler googleOauthSuccessHandler;
 
+//    private final publicUrl = {
+//
+//    }
+
+     String[] publicUrl =  {
+        "/auth/**", "/oauth2/**", "/login/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(c -> c.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/oauth2/**", "/login/**")
-//                                .anyRequest()
-                                .permitAll()
-                                .anyRequest().authenticated()
+                        .requestMatchers(publicUrl).permitAll()
+                        .requestMatchers(HttpMethod.GET , "/posts").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/posts").hasAllRoles(ADMIN.name())
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(requestResponseFilter, JwtAuthFilter.class)
