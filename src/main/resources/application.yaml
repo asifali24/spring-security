@@ -30,9 +30,9 @@ spring:
     client:
       registration:
        google:
-       client-id: ${googleClientId:}
-       client-secret: ${googleSecret:}
+        client-id: ${googleClientId:""}
+        client-secret: ${googleSecret:""}
 
 
 Jwt:
-  key: ${JwtSecretKey:}
+  key: ${JwtSecretKey:""}
