@@ -4,6 +4,7 @@ package com.springSecurityImpl.learnSpringSecurity.config;
 import com.springSecurityImpl.learnSpringSecurity.filter.JwtAuthFilter;
 import com.springSecurityImpl.learnSpringSecurity.filter.RequestResponseFilter;
 import com.springSecurityImpl.learnSpringSecurity.filter.SessionValidationFilter;
+import com.springSecurityImpl.learnSpringSecurity.handlers.GoogleOauthSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class WebSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final RequestResponseFilter requestResponseFilter;
     private final SessionValidationFilter sessionValidationFilter;
+    private final GoogleOauthSuccessHandler googleOauthSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,6 +39,10 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(requestResponseFilter, JwtAuthFilter.class)
                 .addFilterAfter(sessionValidationFilter,JwtAuthFilter.class)
+                .oauth2Login(oauth -> oauth
+                        .failureUrl("/login?error=true")
+                        .successHandler(googleOauthSuccessHandler)
+                )
                 .httpBasic(Customizer.withDefaults());
 
         return httpSecurity.build();

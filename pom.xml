@@ -107,6 +107,13 @@
 				<version>${jjwt.version}</version>
 				<scope>runtime</scope>
 			</dependency>
+
+
+		<!-- This is the magic one - handles the entire OAuth2 client flow -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

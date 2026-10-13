@@ -96,6 +96,30 @@ public class AuthServ {
         return res;
     }
 
+    public void signOut(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            Arrays.stream(cookies)
+                    .filter(cookie -> cookie.getName().equals("refreshCookies"))
+                    .findFirst()
+                    .ifPresent(cookie -> {
+                        try {
+                            UUID userId = jwtService.getUserIdFromToken(cookie.getValue());
+                            userSession.revokeSession(userId, cookie.getValue());
+                        } catch (RuntimeException ignored) {
+                            // Clearing the cookie is still required for an invalid or expired token.
+                        }
+                    });
+        }
+
+        ResponseCookie clearedCookie = ResponseCookie.from("refreshCookies", "")
+                .httpOnly(true)
+                .sameSite("Strict")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, clearedCookie.toString());
+    }
+
 
 
     private User isUserExist(String email){

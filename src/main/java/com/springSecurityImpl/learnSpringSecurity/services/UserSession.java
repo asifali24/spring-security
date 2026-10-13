@@ -48,4 +48,10 @@ public class UserSession {
 
         return isValidSession != null;
     }
+
+    @Transactional
+    public void revokeSession(UUID userId, String token) {
+        sessionRepository.findByUserIdAndTokenAndIsRevokedFalse(userId, token)
+                .ifPresent(session -> session.setIsRevoked(true));
+    }
 }

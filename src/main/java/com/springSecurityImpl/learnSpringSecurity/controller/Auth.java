@@ -33,5 +33,10 @@ public class Auth {
     public ResponseEntity<AuthRes> refreshToken(HttpServletRequest request){
         return ResponseEntity.status(HttpStatus.OK).body(authServ.refreshToken(request));
     }
-}
 
+    @PostMapping("/signout")
+    public ResponseEntity<Void> signOut(HttpServletRequest request, HttpServletResponse response){
+        authServ.signOut(request, response);
+        return ResponseEntity.noContent().build();
+    }
+}
