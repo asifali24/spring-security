@@ -108,7 +108,7 @@ public class AuthServ {
 
         ResponseCookie cookie = ResponseCookie.from("refreshCookies",refreshToken)
                 .httpOnly(true)
-                .sameSite("/auth/refresh")
+                .sameSite("/auth")
                 .maxAge(30)
                 .sameSite("Strict")
                 .build();
