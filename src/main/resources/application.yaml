@@ -28,8 +28,8 @@ spring:
   security:
    oauth2:
     client:
-     registration:
-      google:
+      registration:
+       google:
        client-id: ${googleClientId:}
        client-secret: ${googleSecret:}
 
