@@ -1,6 +1,7 @@
 package com.springSecurityImpl.learnSpringSecurity.entities;
 
 
+import com.springSecurityImpl.learnSpringSecurity.enums.Permission;
 import com.springSecurityImpl.learnSpringSecurity.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,11 +40,22 @@ public class User extends Auditing implements UserDetails  {
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles;
 
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Permission> permissions;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
+        Set<SimpleGrantedAuthority> authority =  this.roles.stream()
                 .map(r -> new SimpleGrantedAuthority("ROLE_"+r.name()))
                 .collect(Collectors.toSet());
+
+        this.permissions.forEach(e ->
+                authority.add(new SimpleGrantedAuthority(e.name()))
+        );
+
+        return authority;
     }
 
     @Override

@@ -8,6 +8,8 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -106,6 +108,35 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(formatError(err));
+    }
+
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<?>> authenticationException(
+            AuthenticationException exception) {
+
+        ApiError error = ApiError.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .message("Authentication is required")
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(formatError(error));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> accessDeniedException(
+            AccessDeniedException exception) {
+
+        ApiError error = ApiError.builder()
+                .status(HttpStatus.FORBIDDEN)
+                .message("You do not have permission to access this resource")
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(formatError(error));
     }
 
     private ApiResponse<?> formatError(ApiError err){

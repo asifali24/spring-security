@@ -1,10 +1,7 @@
 package com.springSecurityImpl.learnSpringSecurity.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -24,4 +21,7 @@ public class Posts extends Auditing {
     private String header;
 
     private String body;
+
+    @ManyToOne
+    private User user;
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,4 +15,5 @@ import lombok.NoArgsConstructor;
 public class PostDto {
     private String header;
     private String body;
+    private UUID userId;
 }
