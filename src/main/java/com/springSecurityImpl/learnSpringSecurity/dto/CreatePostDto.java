@@ -1,0 +1,18 @@
+package com.springSecurityImpl.learnSpringSecurity.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+//@Builder
+public class CreatePostDto {
+    private String header;
+    private String body;
+    private UUID userId;
+}

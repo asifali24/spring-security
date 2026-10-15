@@ -4,13 +4,6 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
-#  security:
-#    user:
-#      name: admin
-#      password: admin@123
-#      roles:
-#        - USER
-
   datasource:
     url: jdbc:postgresql://localhost:5432/spring
     username: ${userName:}
@@ -24,6 +17,19 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  data:
+    redis:
+      host: ${redisHost:localhost}
+      port: ${redisPort:6379}
+      username: ${REDIS_USERNAME:default}
+      password: ${REDIS_PASSWORD}
+      connect-timeout: 5s
+      timeout: 5s
+
+
+  cache:
+    type: redis
 
   security:
     oauth2:

@@ -48,7 +48,7 @@ public class WebSecurityConfig {
 //    }
 
      String[] publicUrl =  {
-        "/auth/**", "/oauth2/**", "/login/**"
+        "/auth/**", "/oauth2/**", "/login/**", "/posts/**"
     };
 
     @Bean
@@ -58,8 +58,8 @@ public class WebSecurityConfig {
                     .cors(Customizer.withDefaults())
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers(publicUrl).permitAll()
-                            .requestMatchers(HttpMethod.GET, "/posts").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/posts").hasAllAuthorities(POST_CREATE.name())
+//                            .requestMatchers(HttpMethod.GET, "/posts").permitAll()
+//                            .requestMatchers(HttpMethod.POST, "/posts").hasAllAuthorities(POST_CREATE.name())
                             .anyRequest().authenticated()
                     )
                     .exceptionHandling(exception -> exception

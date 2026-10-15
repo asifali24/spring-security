@@ -22,6 +22,6 @@ public class Posts extends Auditing {
 
     private String body;
 
-    @ManyToOne
-    private User user;
+//    @ManyToOne
+//    private User user;
 }

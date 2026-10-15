@@ -16,4 +16,5 @@ public class PostDto {
     private String header;
     private String body;
     private UUID userId;
+    private UUID id;
 }
